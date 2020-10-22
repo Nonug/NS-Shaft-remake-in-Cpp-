@@ -2,9 +2,9 @@
 This a text-based game for the COMP2113 project
 
 ## Team 
-Group 4:  
+Group 4 
 Nonug: Chan Tsz Hei 3035692060  
-Chan Chak Sum
+ChanChakSum3035708534: Chan Chak Sum 3035708534
 
 ## Game description
 From [Wikipedia](https://en.wikipedia.org/wiki/NS-Shaft):
