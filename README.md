@@ -15,7 +15,7 @@ From [Wikipedia](https://en.wikipedia.org/wiki/NS-Shaft):
 > There are two ways to die: by hitting too many spikes and running out of health, or falling off the bottom of the screen. Hitting spikes (either on the ceiling, or on a platform) reduces the player's amount of health by five, while landing on an ordinary platform increases the player's health by one.
 
 ## Showcase:
-[![](http://img.youtube.com/vi/-SksNwLmSSE/0.jpg)](http://www.youtube.com/watch?v=-SksNwLmSSE "")
+[![](http://img.youtube.com/vi/-SksNwLmSSE/0.jpg)](https://youtu.be/-SksNwLmSSE?t=32 "")
 
 ## Code Requirements:
 Requirement | Implementation
