@@ -23,7 +23,7 @@ Requirement | Implementation
 Generation of random game sets or events | Procedural generation of different types of tiles randomly (types, location)
 Data structures for storing game status | 
 Dynamic memory management | 
-File input/output (e.g., for loading/saving game status) |
+File input/output (e.g., for loading/saving game status) | Leaderboard
 Program codes in multiple files | Class 
 
 - [ ] Proper indentation and naming styles
