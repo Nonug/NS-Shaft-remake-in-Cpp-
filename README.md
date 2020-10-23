@@ -34,6 +34,7 @@ Program codes in multiple files | Class
 - [ ] In-code documentation
 - [ ] Tile generation, physics.
 - [ ] Player collision physics
+- [ ] Score calculation (floor)
 - [ ] Player HP
 - [ ] Difficulty
 - [ ] leaderboard
