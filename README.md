@@ -1,4 +1,4 @@
-# NS Shaft remake in Cpp
+# NS-Shaft remake in Cpp
 This a text-based game for the COMP2113 project
 
 ## Team 
@@ -26,8 +26,16 @@ Dynamic memory management |
 File input/output (e.g., for loading/saving game status) | Leaderboard
 Program codes in multiple files | Class 
 
-- [ ] Proper indentation and naming styles
-- [ ] In-code documentation
-
 ## Libraries used:
 - `ncurses.h` for drawing the frames in the terminal
+
+## Todo
+- [ ] Proper indentation and naming styles
+- [ ] In-code documentation
+- [ ] Tile generation, physics.
+- [ ] Player collision physics
+- [ ] Player HP
+- [ ] Difficulty
+- [ ] leaderboard
+- [ ] Soundeffect and music
+- [ ] Local Multiplayer
