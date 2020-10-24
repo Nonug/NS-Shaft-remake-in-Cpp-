@@ -29,6 +29,9 @@ Program codes in multiple files | Class
 ## Libraries used:
 - `ncurses.h` for drawing the frames in the terminal
 
+## Compile
+`g++ main.cpp -lncurses`
+
 ## Todo
 - [ ] Proper indentation and naming styles
 - [ ] In-code documentation
