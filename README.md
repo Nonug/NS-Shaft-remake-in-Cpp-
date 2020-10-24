@@ -24,7 +24,7 @@ Generation of random game sets or events | Procedural generation of different ty
 Data structures for storing game status | Setting up different types of data for the storage of game status such as player health 
 Dynamic memory management | Setting up pointers with "new" type to create dynamic variables in the heap instead of regular memory (e.g. player)
 File input/output (e.g., for loading/saving game status) | Leaderboard/Legend/Health
-Program codes in multiple files | Class 
+Program codes in multiple files | Classes, Sprites, Options are stored in different files  
 
 ## Libraries used:
 - `ncurses.h` for drawing the frames in the terminal
