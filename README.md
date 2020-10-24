@@ -21,9 +21,9 @@ From [Wikipedia](https://en.wikipedia.org/wiki/NS-Shaft):
 Requirement | Implementation
 ------------ | -------------
 Generation of random game sets or events | Procedural generation of different types of tiles randomly (types, location)
-Data structures for storing game status | 
-Dynamic memory management | 
-File input/output (e.g., for loading/saving game status) | Leaderboard
+Data structures for storing game status | Setting up different types of data for the storage of game status such as player health 
+Dynamic memory management | Setting up pointers with "new" type to create dynamic variables in the heap instead of regular memory (e.g. player)
+File input/output (e.g., for loading/saving game status) | Leaderboard/Legend/Health
 Program codes in multiple files | Class 
 
 ## Libraries used:
