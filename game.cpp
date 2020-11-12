@@ -1,7 +1,6 @@
 #include <string>
 #include <curses.h>
 #include <iostream>
-#include <cstdint>
 #include "game.h"
 using namespace std;
 
@@ -53,18 +52,15 @@ void run()
         mvaddch(player.pos.y, player.pos.x, ' ');
         //use a switch data type to interpret the type of input
         switch(input_char){
+        //quit the game 
         case 'q':
             exit = true;
             break;
-        /*case 'w':
-            player.pos.y -= 1;
-            break;*/
+        //move to the left
         case 'a':
             player.pos.x -= 1;
             break;
-        /*case 's':
-            player.pos.y += 1;
-            break;*/
+        //move to the right
         case 'd':
             player.pos.x += 1;
             break;
