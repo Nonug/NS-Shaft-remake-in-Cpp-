@@ -1,7 +1,8 @@
 #include <iostream>
 #include <string>
-#include <ncurses.h>
+#include <curses.h>
 using namespace std;
+#include "game.h"
 
 int main()
 {
@@ -11,8 +12,8 @@ int main()
     //initialize the curses
     initscr();
     t = text;
-    
-    //print out the word character by character 
+
+    //print out the word character by character
     while (*t){
         addch(*t);
         t++;
@@ -30,18 +31,29 @@ int main()
         refresh();
         napms(2000);
         endwin();
+        return 0; // return value for the shell
     }
     //start the game if choose P
     else if(c = 'P')
     {
-        printw("\nThe game begins in 5 seconds......");
+        char txt[] = "\nInstructions \nPress a to go left \nPress d to go right \nPress q to quit \nAvoid landing on spikes \nThe game begins in 5 seconds......";
+        char *o;
+        o = txt;
+
+        while (*o){
+            addch(*o);
+            o++;
+            refresh();
+            napms(100);
+        }
         refresh();
         napms(5000);
-        endwin();
-
+        int init_status = init();
+        if (init_status == 0)
+              {
+                     run();
+              }
+              close();
+              return 0;
     }
-
-    //endwin(); //properly end curses
-
-    return 0; // return value for the shell
 }
