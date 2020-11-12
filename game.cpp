@@ -72,6 +72,7 @@ void run()
         mvaddch(player.pos.y, player.pos.x, player.disp_char);
         //refresh screen to update new location
         refresh();
+      
         if (exit){
         break;
     }
