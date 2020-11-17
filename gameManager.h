@@ -2,7 +2,7 @@
 #include "common.h"
 #include "tile.h"
 #include "player.h"
-#include "spikeTile.h"
+#include "subtypeTile.h"
 
 #ifndef _MANAGER_H_
 #define _MANAGER_H_
@@ -124,7 +124,7 @@ class Manager
       // remove dead tiles
       // with an iterator using Erase-Remove Idiom
       tiles.erase(remove_if(tiles.begin(), tiles.end(),
-                  [](auto& tile)
+                  [](auto& tile) // C++14: auto in lambda
                   {return tile->isDead;}),
                   tiles.end());
     }

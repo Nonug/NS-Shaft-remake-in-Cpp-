@@ -5,7 +5,7 @@
 #include "player.h"
 #include "tile.h"
 #include "gameManager.h"
-#include "spikeTile.h"
+#include "subtypeTile.h"
 // #include <functional> // for unary_function
 
 
