@@ -30,16 +30,15 @@ Program codes in multiple files | Classes, Sprites, Options are stored in differ
 - `ncurses.h` for drawing the frames in the terminal
 
 ## Compile
-`g++ main.cpp -lncurses`
+`g++ -std=c++14 main.cpp -lncursesw`
 
 ## Todo
 - [ ] Proper indentation and naming styles
 - [ ] In-code documentation
 - [ ] Tile generation, physics.
-- [ ] Player collision physics
+- [x] Player collision physics
 - [ ] Score calculation (floor)
 - [ ] Player HP
 - [ ] Difficulty
 - [ ] leaderboard
 - [ ] Soundeffect and music
-- [ ] Local Multiplayer
