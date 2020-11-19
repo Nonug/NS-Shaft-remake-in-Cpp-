@@ -26,6 +26,15 @@ using namespace std;
 #define MAX_Y 37
 // y of Ceiling of playwin
 #define YLIMIT 5
+// max health is 10
+#define MAX_HEALTH 10
+// statistics of player
+struct{
+    int HEALTH = 10;
+    int LEVEL = 0;
+}stats;
+#define control_quit 'q'
+
 
 
 #endif

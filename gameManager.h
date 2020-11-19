@@ -1,9 +1,6 @@
-
 #include "common.h"
 #include "tile.h"
 #include "player.h"
-#include "subtypeTile.h"
-
 #ifndef _MANAGER_H_
 #define _MANAGER_H_
 
@@ -37,14 +34,19 @@ class Manager
 
 
     WINDOW* playwin;
+    WINDOW* statwin; //!
+    WINDOW* instwin;
     vector<unique_ptr<Tile>> tiles;
     Player* p;
 
     Manager(){
-      playwin = newwin(37,MAX_X, 5 , 1); // playing window
+      playwin = newwin(MAX_Y,MAX_X, 5 , 1); // playing window
+      statwin = newwin(9,21,5,MAX_X+4); //statistics window!
+      instwin = newwin(14,50,15, MAX_X+4);
        nodelay(playwin, true);
       p = new Player(playwin,6,20);
     }
+
 
     void display(){
 
@@ -52,6 +54,8 @@ class Manager
 
       refresh();
       wrefresh(playwin);
+      wrefresh(statwin); //!
+      wrefresh(instwin);
       // wrefresh(playwin);
 
       getInput(); //read user input
@@ -66,6 +70,8 @@ class Manager
       }
 
       box(playwin,0,0);
+      box(statwin,0,0);//!
+      box(instwin,0,0);
 
       // for (int i = 0 ; i < 4;i++)
       // mvprintw(4,1+i*15,"|23456789abced|");
@@ -74,6 +80,28 @@ class Manager
       refresh();
       usleep(DELAY); // Shorter delay between movements
     }
+
+    void update_stat(int level, int health) {
+      box(statwin, 0, 0);
+	    mvwprintw(statwin, 2, 5, "HEALTH : %d", health);
+	    mvwprintw(statwin, 4, 5, "LEVEL : %d", level);
+	    mvwprintw(statwin, 0, 6 , "# STATS #");
+    }
+
+    void update_inst(){
+      box(instwin,0,0);
+      mvwprintw(instwin, 2, 2, "Controls :");
+	    mvwprintw(instwin, 3, 2, "Move Left -> Left arrow key");
+	    mvwprintw(instwin, 4, 2, "Move Right -> Right arrow key");
+	    mvwprintw(instwin, 5, 2, "Quit game -> %c", control_quit);
+      mvwprintw(instwin, 6, 2, "blue normal tile: +1 hp");
+      mvwprintw(instwin, 7, 2, "red spike tile: -5 hp");
+      mvwprintw(instwin, 8, 2, "green spring tile: bouncy, +1 hp");
+      mvwprintw(instwin, 9, 2, "yellow fragile tile: breaks after 1 second");
+      mvwprintw(instwin, 10, 2, "white left conveyer tile: pushes left");
+      mvwprintw(instwin, 11,2, "magenta right conveyer tile: pushes right");
+    }
+
 
     void run(){
 
@@ -93,9 +121,17 @@ class Manager
         }
         clearDeadTiles();
         display();
+        healthupdate();
+        update_stat(stats.LEVEL, stats.HEALTH);
+        update_inst();
+        effect();
+        if (stats.HEALTH == 0)
+        {
+          running = 0;
+        }
 
       }
-      //call destructor here, game ending screen
+      //deconstructor here
     }
 
     // generate tiles psuedo-randomly
@@ -148,14 +184,94 @@ class Manager
       return NULL;
     }
 
+    // effects of the tiles, fragile tiles not added yet
+    void effect(){
+      Tile* t = collisionsCheck();
+      if (t != NULL){
+        // spring tile bounces upwards by 10 
+        if (t -> type == 3){
+          p -> y -= 10;
+        }
+        if (t -> type == 4){
+            t -> isDead = 1;
+        }
+        // left conveyer tile pushes 6 units to left
+        if (t -> type == 5){
+          p -> x -= 6;
+        }
+        // right conveyer pushes 6 units to right
+        if (t -> type == 6){
+          p -> x += 6;
+        }
+      }
+    }
+
+
+    // count the players health and increase a level when landing on a tile
+    // haven't made the level stop increasing constantly on one tile yet
+    // haven't solved the instant dying issue
+    void healthupdate()
+    {
+      bool ontile = 0;
+      Tile* t= collisionsCheck();
+      if (t != NULL){
+        ontile = 1;
+      }
+      if(ontile == 1){
+        //normal tile
+         if (t -> type == 1)
+        {
+          if (stats.HEALTH < MAX_HEALTH){
+            stats.HEALTH++;
+          }
+          stats.LEVEL += 1;
+        }
+        //spike tile
+        if (t -> type == 2)
+        {
+          stats.HEALTH -= 5;
+          stats.LEVEL += 1;
+        }
+        //spring tile
+        if (t -> type == 3)
+        {
+          if (stats.HEALTH < MAX_HEALTH){
+            stats.HEALTH++;
+          }
+          stats.LEVEL += 1;
+        }
+        //right conveyer tile
+        if (t -> type == 5)
+        {
+          if (stats.HEALTH < MAX_HEALTH){
+            stats.HEALTH++;
+          }
+          stats.LEVEL += 1;
+        }
+        //left conveyer tile
+        if (t -> type == 6)
+        {
+          if (stats.HEALTH < MAX_HEALTH){
+            stats.HEALTH++;
+          }
+          stats.LEVEL += 1;
+        }
+      }
+      /*if (p -> y > MAX_Y){
+        stats.HEALTH = 0;
+      }*/
+    }
+
+
+
     void movePlayer(){
       p->x += p->velocity[X];
       Tile* t= collisionsCheck();
-      if (t != NULL){                  // TODO: fix the clipping issues
+      if (t != NULL){
           if (p->velocity[X] > 0){
             // playerR = tileL
             // playerX + playerW = tileX
-            // p->x = t->x - p->width;
+            //p->x = t->x - p->width;
 
           }
           if (p->velocity[X] < 0){
@@ -202,10 +318,6 @@ class Manager
       }
       return choice;
     }
-
-
-
-
 };
 
 
