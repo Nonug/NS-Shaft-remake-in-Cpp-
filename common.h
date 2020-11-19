@@ -27,13 +27,15 @@ using namespace std;
 // y of Ceiling of playwin
 #define YLIMIT 5
 // max health is 10
-#define MAX_HEALTH 10
-// statistics of player
-struct{
-    int HEALTH = 10;
-    int LEVEL = 0;
-}stats;
+#define MAX_HEALTH 9
 #define control_quit 'q'
+// constants for types of tile 
+#define NORMAL 1
+#define SPIKE 2
+#define SPRING 3
+#define FRAGILE 4
+#define LCONVEYER 5
+#define RCONVEYER 6
 
 
 

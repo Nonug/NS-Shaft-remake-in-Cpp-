@@ -29,6 +29,13 @@ class Player
     double velocity[2] = {0,0}; // (y,x) velocity
     bool inAir = 0;             // is player in air? (maybe useful for defining onStepBlock)
     int height = 2, width = 2;  // size of the player
+    int health = 9;            // default hp
+    int level = 0;              // default lv
+    bool diff2 = 0;            //indicator of difficulty 2
+    bool diff3 = 0;            //indicator of difficulty 3
+    bool diff4 = 0;            //indicator of difficulty 4
+    bool diff5 = 0;            //indicator of difficulty 5, which is the maximum
+    bool first_tile = 0;       //indicator of whether the first tile is created
 
     Player(WINDOW * win, double yc, double xc);
     ~Player();
@@ -133,7 +140,7 @@ void Player::display()
   // mvwaddch(curwin, y, x, spite);
 
   if (y < YLIMIT) y = YLIMIT + 1;    // Prevent clipping out of ceiling
-  if (y > MAX_Y + 2) y = YLIMIT + 1; // falls out of scrn: teleport back
+  /*if (y > MAX_Y + 2) y = YLIMIT + 1;*/ // falls out of scrn: teleport back
                                      // maybe relocate this to manager
                                      // placeholder for testing. TODO: trigger dead
 
@@ -143,6 +150,8 @@ void Player::display()
   mvprintw(y+1,x+3-offset,(*++currentSprite).c_str()); // point sprite[1]
   attroff(COLOR_PAIR(1));
   currentSprite--;  // point sprite[0]
+  velocity[X] = 0;
+  velocity[Y] = 0;
 }
 
 

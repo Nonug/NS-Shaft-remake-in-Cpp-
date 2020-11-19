@@ -38,11 +38,13 @@ class Manager
     WINDOW* instwin;
     vector<unique_ptr<Tile>> tiles;
     Player* p;
+    int diff = 1;
+    int difficulty = 100;
 
     Manager(){
       playwin = newwin(MAX_Y,MAX_X, 5 , 1); // playing window
-      statwin = newwin(9,21,5,MAX_X+4); //statistics window!
-      instwin = newwin(14,50,15, MAX_X+4);
+      statwin = newwin(9,24,5,MAX_X+4); //statistics window!
+      instwin = newwin(14,55,15, MAX_X+4);
        nodelay(playwin, true);
       p = new Player(playwin,6,20);
     }
@@ -60,6 +62,7 @@ class Manager
 
       getInput(); //read user input
       p->gravity();
+      effect();
       movePlayer();
       p->display();
 
@@ -81,10 +84,11 @@ class Manager
       usleep(DELAY); // Shorter delay between movements
     }
 
-    void update_stat(int level, int health) {
+    void update_stat(int level, int health, int diff) {
       box(statwin, 0, 0);
-	    mvwprintw(statwin, 2, 5, "HEALTH : %d", health);
-	    mvwprintw(statwin, 4, 5, "LEVEL : %d", level);
+	    mvwprintw(statwin, 2, 5, "HEALTH : %i", health);
+	    mvwprintw(statwin, 4, 5, "LEVEL : %i", level);
+      mvwprintw(statwin, 6, 5, "DIFFICULTY : %i", diff);
 	    mvwprintw(statwin, 0, 6 , "# STATS #");
     }
 
@@ -95,11 +99,11 @@ class Manager
 	    mvwprintw(instwin, 4, 2, "Move Right -> Right arrow key");
 	    mvwprintw(instwin, 5, 2, "Quit game -> %c", control_quit);
       mvwprintw(instwin, 6, 2, "blue normal tile: +1 hp");
-      mvwprintw(instwin, 7, 2, "red spike tile: -5 hp");
+      mvwprintw(instwin, 7, 2, "red spike tile: -3 hp");
       mvwprintw(instwin, 8, 2, "green spring tile: bouncy, +1 hp");
-      mvwprintw(instwin, 9, 2, "yellow fragile tile: breaks after 1 second");
-      mvwprintw(instwin, 10, 2, "white left conveyer tile: pushes left");
-      mvwprintw(instwin, 11,2, "magenta right conveyer tile: pushes right");
+      mvwprintw(instwin, 9, 2, "yellow fragile tile : trap block that breaks");
+      mvwprintw(instwin, 10, 2, "white left conveyer tile: pushes left, +1 hp ");
+      mvwprintw(instwin, 11,2, "magenta right conveyer tile: pushes right, +1 hp");
     }
 
 
@@ -112,7 +116,7 @@ class Manager
       srand(time(0)); //set rand seed
       while(running)
       {
-
+        first_tile();
         if (clock::now() - before > timelimit)
         {
           before = clock::now();
@@ -122,10 +126,10 @@ class Manager
         clearDeadTiles();
         display();
         healthupdate();
-        update_stat(stats.LEVEL, stats.HEALTH);
+        update_stat(p->level, p->health, diff);
         update_inst();
-        effect();
-        if (stats.HEALTH == 0)
+        checkseed(p->level);
+        if (p->health <= 0)
         {
           running = 0;
         }
@@ -134,11 +138,20 @@ class Manager
       //deconstructor here
     }
 
+    // generates the first tile under player 
+    // so that player don't fall out of the screen at the beginning
+    void first_tile(){
+      if (p->first_tile != 1){
+        tiles.emplace_back(new Tile(tileSpawnY, 17, speed));
+        p->first_tile = 1;
+      }
+      
+    }
     // generate tiles psuedo-randomly
     void addTile(){
       // maybe seed shrinks for higher difficulties/when score is high?
 
-      int seed = rand() % 100; // rand from 0 to 99
+      int seed = rand() % difficulty; // rand from 0 to 99
       tileSpawnX = rand() % (MAX_X - BWIDTH); //random xpos for platforms
       if (seed > 50){
         tiles.emplace_back(new Tile(tileSpawnY,tileSpawnX,speed));
@@ -174,92 +187,119 @@ class Manager
             p->x >= tileMaxX || // player LEFT > tile RIGHT
             tile->y >= (p->y+p->height) || // Tile top is UNDER player bottom
             tile->x >= (p->x + p->width))
-            continue;
+            continue; // no collision
         else {
-          p->inAir = 0;
-          return tile.get();
+          p->inAir = 0; // has collision
+          // tile->isTouched = 1; relocated to hpupdate
+          return tile.get(); // return RAW pointer to tile
         }
       }
-      p->inAir = 1;
+      p->inAir = 1; // collisions at all
       return NULL;
     }
 
-    // effects of the tiles, fragile tiles not added yet
+
+    // change the difficulty as the level increases
+    // as the random function works as follow
+    // rand() % (max - min + 1) + min
+    // where the generated number would be in range min <= x <= max
+    void checkseed(int level){
+      if (level%10 == 0 && level/10 == 1 && p->diff2 != 1){
+        p->diff2 = 1;
+        difficulty = 91;  // rand from 0 to 90
+        diff += 1; 
+      }
+      if (level%20 == 0 && level/10 == 2 && p->diff3 != 1){
+        p->diff3 = 1;
+        difficulty = 86; // rand from 0 to 85
+        diff += 1;
+      }
+      if (level%30 == 0 && level/10 == 3 && p->diff4 != 1){
+        p->diff4 = 1;
+        difficulty = 81; // rand from 0 to 80
+        diff += 1;
+      }
+      if (level%40 == 0 && level/10 == 4 && p->diff5 != 1){
+        p->diff5 = 1;
+        difficulty = 76; // ramd from 0 to 75
+        diff += 1;
+      }
+    }
+
+    // effects of the tiles
     void effect(){
       Tile* t = collisionsCheck();
       if (t != NULL){
-        // spring tile bounces upwards by 10 
-        if (t -> type == 3){
-          p -> y -= 10;
+        // spring tile bounces upwards by 3
+        if (t -> type == SPRING){
+          p->velocity[Y] -= 3;
         }
-        if (t -> type == 4){
+        // fragile tile are trap blocks that breaks
+        if (t -> type == FRAGILE){
             t -> isDead = 1;
         }
-        // left conveyer tile pushes 6 units to left
-        if (t -> type == 5){
-          p -> x -= 6;
+        // left conveyer tile sets velocity to 0.2 units leftwards 
+        if (t -> type == LCONVEYER){
+          p->velocity[X] -= 0.2;
         }
-        // right conveyer pushes 6 units to right
-        if (t -> type == 6){
-          p -> x += 6;
+        // right conveyer tile sets velocity to 0.2 unit rightwards
+        if (t -> type == RCONVEYER){
+          p->velocity[X] += 0.2;
         }
       }
     }
 
 
-    // count the players health and increase a level when landing on a tile
-    // haven't made the level stop increasing constantly on one tile yet
-    // haven't solved the instant dying issue
+  
     void healthupdate()
     {
-      bool ontile = 0;
       Tile* t= collisionsCheck();
-      if (t != NULL){
-        ontile = 1;
-      }
-      if(ontile == 1){
+      // if player standing on a tile and the tile is not being standed on previously
+      if(t != NULL && t->isTouched != 1){ 
+
+        t->isTouched = 1;
         //normal tile
-         if (t -> type == 1)
+         if (t -> type == NORMAL)
         {
-          if (stats.HEALTH < MAX_HEALTH){
-            stats.HEALTH++;
+          if (p->health < MAX_HEALTH){
+            p->health++;
           }
-          stats.LEVEL += 1;
+          p->level += 1;
         }
         //spike tile
-        if (t -> type == 2)
+        if (t -> type == SPIKE)
         {
-          stats.HEALTH -= 5;
-          stats.LEVEL += 1;
+            p->health -= 3;
+            p->level += 1;
         }
         //spring tile
-        if (t -> type == 3)
+        if (t -> type == SPRING)
         {
-          if (stats.HEALTH < MAX_HEALTH){
-            stats.HEALTH++;
+          if (p->health < MAX_HEALTH){
+            p->health++;
           }
-          stats.LEVEL += 1;
+          p->level += 1;
         }
         //right conveyer tile
-        if (t -> type == 5)
+        if (t -> type == LCONVEYER)
         {
-          if (stats.HEALTH < MAX_HEALTH){
-            stats.HEALTH++;
+          if (p->health < MAX_HEALTH){
+            p->health++;
           }
-          stats.LEVEL += 1;
+          p->level += 1;
         }
         //left conveyer tile
-        if (t -> type == 6)
+        if (t -> type == RCONVEYER)
         {
-          if (stats.HEALTH < MAX_HEALTH){
-            stats.HEALTH++;
+          if (p->health < MAX_HEALTH){
+            p->health++;
           }
-          stats.LEVEL += 1;
+          p->level += 1;
         }
       }
-      /*if (p -> y > MAX_Y){
-        stats.HEALTH = 0;
-      }*/
+      if (p -> y > MAX_Y + 10){
+        p->health = 0;
+      } 
     }
 
 
@@ -313,7 +353,7 @@ class Manager
           running = 0; //TODO define and call destructors
           break;
         default:
-          p->velocity[X] = 0;
+          // p->velocity[X] = 0;
           break;
       }
       return choice;
