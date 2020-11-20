@@ -33,12 +33,12 @@ Program codes in multiple files | Classes, Sprites, Options are stored in differ
 `g++ -std=c++14 main.cpp -lncursesw`
 
 ## Todo
-- [ ] Proper indentation and naming styles
-- [ ] In-code documentation
-- [ ] Tile generation, physics.
+- [X] Proper indentation and naming styles
+- [X] In-code documentation
+- [X] Tile generation, physics.
 - [x] Player collision physics
-- [ ] Score calculation (floor)
-- [ ] Player HP
-- [ ] Difficulty
+- [X] Score calculation (floor)
+- [X] Player HP
+- [X] Difficulty
 - [ ] leaderboard
 - [ ] Soundeffect and music
