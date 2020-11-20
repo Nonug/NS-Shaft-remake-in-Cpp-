@@ -1,59 +1,41 @@
-#include <iostream>
-#include <string>
-#include <curses.h>
-using namespace std;
-#include "game.h"
+// square (y,x) = (2,3)
+// playwin: h,w = 22*2,24*3
+// player: 2*2, 2*3
+#include "common.h" // relocate incldues and global var
+#include "player.h"
+#include "tile.h"
+#include "gameManager.h"
+// #include "subtypeTile.h"
+// #include <functional> // for unary_function
 
-int main()
-{
-    char text[] = "Text based NS-Shaft \n1. Play(P) \n2. Exit(E) \nEnter your choice:";
-    char *t;
 
-    //initialize the curses
-    initscr();
-    t = text;
+void game_init(){
+  setlocale(LC_ALL, ""); // set locale to draw utf-8 characters
+  initscr(); // Initialize the window
 
-    //print out the word character by character
-    while (*t){
-        addch(*t);
-        t++;
-        refresh();
-        //with 1/10th second of pause in between
-        napms(100);
-    }
+  // start colour if its supported
+  if(has_colors() == FALSE)
+  {
+    endwin();
+    printf("Your terminal does not support color\n");
+    exit(1);
+  }
+  start_color();			/* Start color 			*/
+  // init_pair(1, COLOR_RED, COLOR_BLACK);
+  // init_pair(tile_color, COLOR_YELLOW, COLOR_GREEN);
+  // init_pair(blank_color, COLOR_BLACK, COLOR_BLACK);
+  // init_pair(b_and_w, COLOR_WHITE, COLOR_BLACK);
 
-    //grab the choice of user
-    char c = getch();
-
-    //Exit the game if choose E
-    if (c == 'E'){
-        printw("\nBye Bye");
-        refresh();
-        napms(2000);
-        endwin();
-        return 0; // return value for the shell
-    }
-    //start the game if choose P
-    else if(c = 'P')
-    {
-        char txt[] = "\nInstructions \nPress a to go left \nPress d to go right \nPress q to quit \nAvoid landing on spikes \nThe game begins in 5 seconds......";
-        char *o;
-        o = txt;
-
-        while (*o){
-            addch(*o);
-            o++;
-            refresh();
-            napms(100);
-        }
-        refresh();
-        napms(5000);
-        int init_status = init();
-        if (init_status == 0)
-              {
-                     run();
-              }
-              close();
-              return 0;
-    }
+  raw();				/* Line buffering disabled	*/
+  keypad(stdscr, TRUE);		/* We get F1, F2 , arrow keys etc..		*/
+  noecho(); // Don't echo any keypresses
+  curs_set(FALSE); // Don't display a cursor
+  // //allow to animate screen while waiting input
+  nodelay(stdscr, true);
 }
+int main(int argc, char** argv) {
+    game_init(); // Initialize the screen
+    Manager manager; // create the game manager and run
+    manager.run(); // main game phase, TODO: (include start screen, end screen)
+    endwin(); // end the process TODO: kill playwin, player etc...
+ }

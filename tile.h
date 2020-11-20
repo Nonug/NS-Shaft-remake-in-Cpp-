@@ -27,6 +27,7 @@ class Tile
     virtual void display();
     void move();
     int isDead = 0;
+    bool isTouched = 0;
     int x, width = 15, height = 2;
     double y; // decimals for better speed calculation
     int type;
