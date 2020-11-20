@@ -29,7 +29,7 @@ class Player
     double velocity[2] = {0,0}; // (y,x) velocity
     bool inAir = 0;             // is player in air? (maybe useful for defining onStepBlock)
     int height = 2, width = 2;  // size of the player
-    int health = 9;            // default hp
+    int health = MAX_HEALTH;            // default hp   TODO: fix double digit issue
     int level = 0;              // default lv
     bool diff2 = 0;            //indicator of difficulty 2
     bool diff3 = 0;            //indicator of difficulty 3

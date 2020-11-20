@@ -26,12 +26,14 @@ class Tile
     ~Tile();
     virtual void display();
     void move();
-    int isDead = 0;
-    bool isTouched = 0;
+    bool isDead = 0;     // toggled when out-of-bound, or when fragile is stepped on
+    bool isTouched = 0; // whether the tile has been touched, for hp/score calculation
+    int touchCount = 0; // for spring and fragile tile effect delay
     int x, width = 15, height = 2;
     double y; // decimals for better speed calculation
-    int type;
+    int type; // type of tile. defined in common.h
     WINDOW * boxWin;
+
 
   private:
 
@@ -108,6 +110,7 @@ class SpikeTile : public Tile
 class SpringTile : public Tile
 {
   public:
+
     SpringTile(double y_, int x_, double speed_):Tile(y_, x_, speed_)
     {
       init_pair(3, COLOR_GREEN, COLOR_BLACK); // set colour
@@ -136,6 +139,7 @@ class SpringTile : public Tile
 class FragileTile : public Tile
 {
   public:
+
     FragileTile(double y_, int x_, double speed_):Tile(y_, x_, speed_)
     {
       init_pair(4, COLOR_YELLOW, COLOR_BLACK); // set colour

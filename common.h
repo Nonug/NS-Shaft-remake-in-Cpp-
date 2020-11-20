@@ -26,10 +26,10 @@ using namespace std;
 #define MAX_Y 37
 // y of Ceiling of playwin
 #define YLIMIT 5
-// max health is 10
+// max health is 9
 #define MAX_HEALTH 9
 #define control_quit 'q'
-// constants for types of tile 
+// constants for types of tile
 #define NORMAL 1
 #define SPIKE 2
 #define SPRING 3
