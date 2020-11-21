@@ -46,7 +46,9 @@ int main(int argc, char** argv) {
       menu();                           // start screen
       Manager* manager = new Manager(); // create the game manager and run
       manager->run();                   // main game phase
-      r = manager->running;
+      // after game ends, running = 1 if user chose "return to main menu" in endscreen
+      // otherwise running = 0
+      r = manager->running;             
       delete manager;                   // release memory
     }
     while (r);

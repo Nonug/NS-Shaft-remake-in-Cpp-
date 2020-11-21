@@ -101,7 +101,9 @@ class Manager
       // when dead or quit, wipe the screen and show end screen
       clear();
       refresh();
-      running = endscr(p->level); // call end screen, running becomes true if choose return main screen
+      running = endscr(p->level); // call end screen,
+      // running becomes 1 if choose return main screen
+      // elese 0, which exits the while loop in main, ending the program.
 
     }
 
@@ -285,7 +287,7 @@ class Manager
       Tile* t= collisionsCheck();
 
       // kill player if out of bound
-      if (p -> y > MAX_Y + 10){
+      if (p -> y > MAX_Y){
         p->health = 0;
       }
 

@@ -14,11 +14,6 @@ int endscr(int level)
     fstream file;
     file.open("Score.txt",ios_base::app);
     file << level << endl;
-    /*vector<int> x(istream_iterator<int>(file),{});
-    sort(x.begin(), x.end());
-    for(const auto& elem: x){
-        file << elem << "\n ";
-    } */
     file.close();
 
     // the character array that contains all the choices
@@ -56,7 +51,7 @@ int endscr(int level)
     // instructions of the end screen usage
     mvwprintw(endw, 10, 2, "UP  -> '%c' ", UP);
     mvwprintw(endw, 11, 2, "DOWN -> '%c' ", DOWN);
-    mvwprintw(endw, 12, 2, "Select -> SPACE ");
+    mvwprintw(endw, 12, 2, "Select -> '%c' ", "SPACE");
     wrefresh(endw);
     noecho();
     keypad(endw, true);

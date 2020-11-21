@@ -15,7 +15,6 @@ void menu()
     char choice[15];
     // inp is for input of user
     int inp, i = 0;
-    //
     // // initializd the screen
     // initscr();
     // the window for menu
@@ -84,61 +83,36 @@ void menu()
       	        mvwprintw(ins, 3, 2, "Move Left -> Left arrow key");
       	        mvwprintw(ins, 4, 2, "Move Right -> Right arrow key");
       	        mvwprintw(ins, 5, 2, "Quit game -> %c", QUIT);
-                mvwprintw(ins, 6, 2, "blue normal titlee: +1 hp");
-                mvwprintw(ins, 7, 2, "red spike titlee: -3 hp");
-                mvwprintw(ins, 8, 2, "green spring titlee: bouncy, +1 hp");
-                mvwprintw(ins, 9, 2, "yellow fragile titlee : trap block that breaks, +1 hp");
-                mvwprintw(ins, 10, 2, "white left conveyer titlee: pushes left, +1 hp ");
-                mvwprintw(ins, 11,2, "magenta right conveyer titlee: pushes right, +1 hp");
+                mvwprintw(ins, 6, 2, "blue normal tile: +1 hp");
+                mvwprintw(ins, 7, 2, "red spike tile: -3 hp");
+                mvwprintw(ins, 8, 2, "green spring tile: bouncy, +1 hp");
+                mvwprintw(ins, 9, 2, "yellow fragile tile : trap block that breaks, +1 hp");
+                mvwprintw(ins, 10, 2, "white left conveyer tile: pushes left, +1 hp ");
+                mvwprintw(ins, 11,2, "magenta right conveyer tile: pushes right, +1 hp");
                 wrefresh(ins);
             }
             // Leaderboard choice : trigger the function that shows score board
             if(i == 2)
             {
-                int m,n = 0, count = 0;
-                string line;
+                int n = 0;              // nth score in descending order
                 fstream op("Score.txt");
 
                 ins = newwin(14, 56, 4, 27);
                 box(ins, 0, 0);
                 mvwprintw(ins, 1,2, "Top ten previous highscores");
 
+                // store the scores from file to vector with istream_iterator
+                vector<int> scores((istream_iterator<int>(op)), istream_iterator<int>());
+                sort(scores.begin(), scores.end(), greater<int>()); // sorts in descending order
 
-                vector<int> x((istream_iterator<int>(op)), istream_iterator<int>());
-                sort(x.begin(), x.end(), greater<int>()); // sorts in descending order
+                // print top 10 scores from vec
                 for (const auto& e: x){
-                        if (n >= 9) break;
-                        mvwprintw(ins, n+i, 3, "%d.", n+1); // print in next line the index starting from 1
-                        // op >> m;
-                        mvwprintw(ins, n+i, 6,"%d", e);//
+                        if (n >= 9) break; // only output top 10 scores
+                        mvwprintw(ins, n+i, 3, "%d.", n+1);
+                        mvwprintw(ins, n+i, 6,"%d", e);
                         n++;
 
                     }
-                // while (getline(op, line)){
-                //     count++;
-                // }
-                // if (count >= 10)
-                // {
-                //     while (n < 10)
-                //     {
-                //        mvwprintw(ins, i+1, 1, "%i ->", n+1);
-                //        op >> m;
-                //        mvwprintw(ins, i+1, 9, "%s", m);
-                //        n++;
-                //     }
-                // }
-                // else
-                // {
-                //     while(n < count)
-                //     {
-                //         mvwprintw(ins, n+i, 1, "%d ->", n+1);
-                //         op >> m;
-                //         mvwprintw(ins, n+i, 9,"%d", m);//
-                //         n++;
-                //     }
-                //
-                // }
-                // op.close();
                 mvwprintw(ins, 12, 2, "Press s to continue");
                 wrefresh(ins);
             }
