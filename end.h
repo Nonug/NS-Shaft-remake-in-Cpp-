@@ -7,6 +7,8 @@
 WINDOW* endw;
 WINDOW* scr;
 
+// this is for the endscreen and it returns a value to the main which is for 
+// deciding whether to run the menu screen or exit to the terminal
 int endscr(int level)
 {
 
@@ -62,6 +64,7 @@ int endscr(int level)
 	// this reprints the previous choice after the highlight is turned off
         sprintf(choice, "%s", choice_list[i]);
         mvwprintw(endw, i+1, 1, "%s", choice);
+	 // the player switch to different choices by pressing up and down
         switch(inp)
         {
             case UP:
@@ -78,7 +81,7 @@ int endscr(int level)
                 i = 0;
             }
             break;
-	        // the case when player chooses the current choice
+	        // the case when player chooses the current choice 
             case SELECT:
             // return to menu
             if(i == 0)
@@ -88,7 +91,7 @@ int endscr(int level)
                 refresh();
                 return 1;
             }
-            // the choice of returning to
+            // the choice of exit and returning to terminal
             if(i == 1){
               delwin(endw);
               clear();
@@ -101,6 +104,7 @@ int endscr(int level)
         wattron(endw, A_STANDOUT);
         sprintf(choice, "%s", choice_list[i]);
         mvwprintw(endw, i+1, 1, "%s", choice);
+	    //turns off the highlight of the previous choice
         wattroff(endw, A_STANDOUT);
 
     }
