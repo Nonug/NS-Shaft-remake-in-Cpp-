@@ -25,10 +25,11 @@ Yellow fragile tiles | add one health point and breaks after ~1 second
 Left/Right conveyer tiles | add one health point and pushes player to respective directions   
 
 ## Showcase:
-https://www.youtube.com/watch?v=mfsU_nKl2wI
+[![](http://img.youtube.com/vi/watch?v=mfsU_nKl2wI/0.jpg)](https://www.youtube.com/watch?v=mfsU_nKl2wI "")
 
-Original
-[![](http://img.youtube.com/vi/-SksNwLmSSE/0.jpg)](https://youtu.be/-SksNwLmSSE?t=32 "")
+
+
+[![](http://img.youtube.com/vi/-SksNwLmSSE/0.jpg)](https://youtu.be/-SksNwLmSSE?t=32 "Original")
 
 ## Code Requirements:
 Requirement | Implementation
