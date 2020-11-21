@@ -1,3 +1,13 @@
+/* ------------------------------------
+ *            gameManager.h
+ * ------------------------------------
+ *  Controls the flow of the game,
+ *  entities and physics
+ *
+ * ------------------------------------
+ *
+ */
+
 #include "common.h"
 #include "tile.h"
 #include "player.h"
@@ -5,7 +15,7 @@
 #ifndef _MANAGER_H_
 #define _MANAGER_H_
 
-// Manager Object: Controls the flow of the game, entities and physics
+// Manager Object:
 //
 //  main game control:  run, getInput
 //
@@ -106,7 +116,7 @@ class Manager
         case 'd':
           p->mvright();
           break;
-        case control_quit: // defined in common.h, default = 'q'
+        case QUIT: // defined in common.h, default = 'q'
           running = 0;
           break;
         default:
@@ -169,7 +179,7 @@ class Manager
       mvwprintw(instwin, 2, 2, "Controls :");
 	    mvwprintw(instwin, 3, 2, "Move Left -> Left arrow key");
 	    mvwprintw(instwin, 4, 2, "Move Right -> Right arrow key");
-	    mvwprintw(instwin, 5, 2, "Quit game -> %c", control_quit);
+	    mvwprintw(instwin, 5, 2, "Quit game -> %c", QUIT);
       mvwprintw(instwin, 6, 2, "blue normal tile:");
       mvwprintw(instwin, 7, 2, "red spike tile: -3 hp");
       mvwprintw(instwin, 8, 2, "green spring tile: bouncy");
@@ -312,7 +322,7 @@ class Manager
     void movePlayer(){
       p->x += p->velocity[X];
       p->y += p->velocity[Y];
-      t = collisionsCheck();
+      Tile* t = collisionsCheck();
       if (t != NULL){
           // if falling down
         if (p->velocity[Y] > 0){

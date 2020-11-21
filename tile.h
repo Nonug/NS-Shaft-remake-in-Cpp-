@@ -75,7 +75,7 @@ void Tile::move()
 {
   if (!isDead) y -= speed;
   // if (isDead) y += speed;
-  if (y <= YLIMIT){
+  if (y <= YLIMIT + 1){
     isDead = 1; //true
   }
   // if (y >= 50) isDead = 0;

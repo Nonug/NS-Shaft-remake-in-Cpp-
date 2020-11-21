@@ -1,3 +1,13 @@
+/* ------------------------------------
+ *            main.cpp
+ * ------------------------------------
+ *  Text-based NS-Shaft remake
+ *  based on ncurses
+ *
+ * ------------------------------------
+ *
+ */
+
 #include "common.h" // contain library includes and global var
 #include "player.h" // player class
 #include "tile.h"   // tile class

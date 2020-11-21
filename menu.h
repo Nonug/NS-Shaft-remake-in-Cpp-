@@ -36,8 +36,8 @@ void menu()
         wattroff(men, A_STANDOUT); // turn off the highlight for other choices
     }
     // instructions of the menu usage
-    mvwprintw(men, 10, 2, "Up  -> %c ", up);
-    mvwprintw(men, 11, 2, "Down -> %c ", down);
+    mvwprintw(men, 10, 2, "UP  -> %c ", UP);
+    mvwprintw(men, 11, 2, "DOWN -> %c ", DOWN);
     mvwprintw(men, 12, 2, "Select -> %s ", "SPACE");
     wrefresh(men);
     keypad(men, true);
@@ -50,7 +50,7 @@ void menu()
         mvwprintw(men, i+1, 1, "%s", choice);
         switch(inp)
         {
-            case up:
+            case UP:
               i--;
               if(i < 0)  // go back to last choice
               {
@@ -58,7 +58,7 @@ void menu()
               }
               break;
 
-            case down:
+            case DOWN:
               i++;
               if(i > (CHOICE-1)) // go back to first choice
               {
@@ -66,7 +66,7 @@ void menu()
               }
               break;
 	    // the case when player chooses the current choice
-            case control_choose:
+            case SELECT:
 	    // the choice of play game/ returns 1 to the run() in gameManager
             if(i == 0)
             {
@@ -78,12 +78,12 @@ void menu()
             // for the instruction choice the instruction window pops out
             if(i == 1)
             {
-                ins = newwin(14 , 55, 4, 27);
+                ins = newwin(14 , 56, 4, 27);
                 box(ins, 0, 0);
                 mvwprintw(ins, 2, 2, "Controls :");
       	        mvwprintw(ins, 3, 2, "Move Left -> Left arrow key");
       	        mvwprintw(ins, 4, 2, "Move Right -> Right arrow key");
-      	        mvwprintw(ins, 5, 2, "Quit game -> %c", control_quit);
+      	        mvwprintw(ins, 5, 2, "Quit game -> %c", QUIT);
                 mvwprintw(ins, 6, 2, "blue normal titlee: +1 hp");
                 mvwprintw(ins, 7, 2, "red spike titlee: -3 hp");
                 mvwprintw(ins, 8, 2, "green spring titlee: bouncy, +1 hp");
@@ -92,10 +92,55 @@ void menu()
                 mvwprintw(ins, 11,2, "magenta right conveyer titlee: pushes right, +1 hp");
                 wrefresh(ins);
             }
-	    // Leaderboard choice : trigger the function that shows score board
+            // Leaderboard choice : trigger the function that shows score board
             if(i == 2)
             {
-                //display the score
+                int m,n = 0, count = 0;
+                string line;
+                fstream op("Score.txt");
+
+                ins = newwin(14, 56, 4, 27);
+                box(ins, 0, 0);
+                mvwprintw(ins, 1,2, "Top ten previous highscores");
+
+
+                vector<int> x((istream_iterator<int>(op)), istream_iterator<int>());
+                sort(x.begin(), x.end(), greater<int>()); // sorts in descending order
+                for (const auto& e: x){
+                        if (n >= 9) break;
+                        mvwprintw(ins, n+i, 3, "%d.", n+1); // print in next line the index starting from 1
+                        // op >> m;
+                        mvwprintw(ins, n+i, 6,"%d", e);//
+                        n++;
+
+                    }
+                // while (getline(op, line)){
+                //     count++;
+                // }
+                // if (count >= 10)
+                // {
+                //     while (n < 10)
+                //     {
+                //        mvwprintw(ins, i+1, 1, "%i ->", n+1);
+                //        op >> m;
+                //        mvwprintw(ins, i+1, 9, "%s", m);
+                //        n++;
+                //     }
+                // }
+                // else
+                // {
+                //     while(n < count)
+                //     {
+                //         mvwprintw(ins, n+i, 1, "%d ->", n+1);
+                //         op >> m;
+                //         mvwprintw(ins, n+i, 9,"%d", m);//
+                //         n++;
+                //     }
+                //
+                // }
+                // op.close();
+                mvwprintw(ins, 12, 2, "Press s to continue");
+                wrefresh(ins);
             }
 	    // exit choice : delete the menu windows and return to terminal
             if(i == 3)
@@ -114,6 +159,8 @@ void menu()
 
     }
     delwin(men); // shouldnt run
+    clear();
+    refresh();
     return; // this shouldnt run
 }
 

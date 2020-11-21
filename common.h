@@ -1,35 +1,43 @@
+/* ------------------------------------
+ *               common.h
+ * ------------------------------------
+ *  contain library includes and global
+ *  variables
+ *
+ * ------------------------------------
+ *
+ */
 
 #ifndef _COMMON_H_
 #define _COMMON_H_
 
 #include <string>
-#include <ncurses.h>
-#include <algorithm>  // remove and remove_if
-// #include <iostream>
+#include <ncurses.h>  // for drawing windows in console
+#include <algorithm>  // vec remove_if, sort
 #include <unistd.h>
-// #include <cstring>
-#include <locale.h> //for sprites
-#include <cstdlib> // rand
+#include <iterator>   // for iterating vector
+#include <locale.h>   // for unicode sprites
+#include <cstdlib>    // random number
 #include <vector>
-#include <chrono>  // calc time pass
-#include <memory>  // unique_ptr
-#include <cmath> // for exp()
+#include <chrono>     // calculate time elapsed
+#include <memory>     // unique_ptr
+#include <cmath>      // for exp()
+#include <fstream>
 using namespace std;
-// using namespace std::chrono;
 
 
-#define DELAY 20000 //delay between frame
-// Tile dimensions
-#define BWIDTH 15
-#define BHEIGHT 2
+//delay between frames
+#define DELAY 20000
+
 // Playwin dimensions
 #define MAX_X 60
 #define MAX_Y 37
 // y of Ceiling of playwin
 #define YLIMIT 5
-// max health is 10
-#define MAX_HEALTH 9
-#define control_quit 'q'
+
+// Tile dimensions
+#define BWIDTH 15
+#define BHEIGHT 2
 // constants for types of tile
 #define NORMAL 1
 #define SPIKE 2
@@ -37,13 +45,16 @@ using namespace std;
 #define FRAGILE 4
 #define LCONVEYER 5
 #define RCONVEYER 6
-//for menu
-#define CHOICE 4
-#define control_choose ' '
-#define up 'w'
-#define down 's'
 
+// max player health
+#define MAX_HEALTH 9
 
-
+//for menu controls
+#define CHOICE 4    // menu choices
+#define ECHOICE 3   // end choice
+#define QUIT 'q'
+#define SELECT ' ' //
+#define UP 'w'
+#define DOWN 's'
 
 #endif
