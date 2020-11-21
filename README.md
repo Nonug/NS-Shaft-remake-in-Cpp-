@@ -12,7 +12,18 @@ From [Wikipedia](https://en.wikipedia.org/wiki/NS-Shaft):
 
 > NS-Shaft is a platform game in which the player attempts to descend into a cave. There are two controls, which move the player to the left and the right. The platforms move up the screen at a slowly accelerating rate. A ceiling of spikes hovers at the top of the screen. The goal is to fall from platform to platform rapidly enough to not be hit by the spikes, but slowly enough not to fall off the bottom of the screen.  
 
-> There are two ways to die: by hitting too many spikes and running out of health, or falling off the bottom of the screen. Hitting spikes (either on the ceiling, or on a platform) reduces the player's amount of health by five, while landing on an ordinary platform increases the player's health by one.
+## Basic Game Rules
+> The player controls the character with 'a' and 'd'. The max health point of the player is 9.
+There are 6 types of tiles in the game and the player will desend onto the tiles. As the game progresses, the hostile spike tile will become more and more common. Here's a brief introduction of the 6 tiles. 
+tile | effect
+------------ | -------------
+Normal tile (blue) | adds one health point
+Spike tile (red) | reduces three health points
+Fragile tile (yellow) | adds one health point and breaks after ~ 1 second
+Spring tile (green) | adds one health point and bounces the player up 
+Left conveyer tile (white) | adds one health point and pushes the player to the left
+Right conveyer tile (magenta) | adds one health point and pushes the player to the right
+
 
 ## Showcase:
 [![](http://img.youtube.com/vi/-SksNwLmSSE/0.jpg)](https://youtu.be/-SksNwLmSSE?t=32 "")
@@ -23,14 +34,17 @@ Requirement | Implementation
 Generation of random game sets or events | Procedural generation of different types of tiles randomly (types, location)
 Data structures for storing game status | Setting up different types of data for the storage of game status such as player health 
 Dynamic memory management | Setting up pointers with "new" type to create dynamic variables in the heap instead of regular memory (e.g. player)
-File input/output (e.g., for loading/saving game status) | Leaderboard/Legend/Health
-Program codes in multiple files | Classes, Sprites, Options are stored in different files  
+File input/output (e.g., for loading/saving game status) | Storing high scores in the leader board
+Program codes in multiple files | header files for game components(gameManager.h/tile.h/menu.h, etc)   
 
 ## Libraries used:
 - `ncurses.h` for drawing the frames in the terminal
 
 ## Compile
 `g++ -std=c++14 main.cpp -lncursesw`
+
+## Run
+`./a.out`
 
 ## Todo
 - [X] Proper indentation and naming styles
@@ -40,5 +54,4 @@ Program codes in multiple files | Classes, Sprites, Options are stored in differ
 - [X] Score calculation (floor)
 - [X] Player HP
 - [X] Difficulty
-- [ ] leaderboard
-- [ ] Soundeffect and music
+- [X] leaderboard
