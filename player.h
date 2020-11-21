@@ -23,19 +23,18 @@ const int Y = 0;
 class Player
 {
   public:
-    // too lazy to make setters and getters instead of making variables public
     // these are public for manager
     double x, y;
     double velocity[2] = {0,0}; // (y,x) velocity
-    // bool inAir = 0;             // is player in air? (maybe useful for defining onStepBlock)
+    
     int height = 2, width = 2;  // size of the player
-    int health = MAX_HEALTH;    // default hp   TODO: fix double digit issue
+    int health = MAX_HEALTH;    // default hp   
     int level = 0;              // default lv
     int invincibleCount = 0;    // increased if hit ceiling, allow phasing through tiles and count down back to 0
     int hurtFlashCount = 0;     // increased when hurt, change colour to red until count back to 0
     int spriteCount = 0;     // count down to alternate between walking sprites
 
-    Player(WINDOW * win, double yc, double xc);
+    Player(WINDOW * win, double yc, double xc); 
     ~Player();
 
     void mvleft();
@@ -54,8 +53,7 @@ class Player
     string movingLDown[2] = {"┗(^o^ )┓","┏┗"};
     string movingRUp[2] = {"┗( ^o^)┓","┓┗"};
     string movingRDown[2] = {"┏( ^o^)┛","┛┓"};
-    // string jumpL[2] = {"┗(^o^ )┛","┗┃"};    TODO: maybe implement this if have spare time
-    // string jumpR[2] = {"┗( ^o^)┛","┃┛"};
+    
     string *currentSprite = init;   // current sprite. for display()
 
 
@@ -72,7 +70,7 @@ Player::Player(WINDOW * win, double yc, double xc)
   curwin = win;
   y = yc;
   x = xc;
-  // keypad(curwin, true); // is this necessary?
+  
 }
 
 // Destructor : release memory
@@ -82,7 +80,7 @@ Player::~Player()
 }
 
 void Player::mvleft()
-{
+{ // set to negative speed so player moves to the left
   velocity[X] = -speed;
 
   // Stops the player from going pass the playwin
@@ -91,7 +89,7 @@ void Player::mvleft()
     x = 1 + offset;
     velocity[X] = 0; // reset velocity (is this necessary?)
   }
-
+  
   spriteCount--;
   if (spriteCount > 5){ // alternate between 2 moving spirtes
     currentSprite = movingLDown;
@@ -141,7 +139,7 @@ void Player::display()
     health -= 3; //lose hp
   };
 
-  init_pair(9, COLOR_RED, COLOR_BLACK); // TODO: make player flash colour if hurt
+  init_pair(9, COLOR_RED, COLOR_BLACK); // player flash colour if hurt
   if (hurtFlashCount > 0){
     hurtFlashCount--;
     if (10 < hurtFlashCount < 20) attron(COLOR_PAIR(9)); // flash red
