@@ -106,7 +106,7 @@ void menu()
                 sort(scores.begin(), scores.end(), greater<int>()); // sorts in descending order
 
                 // print top 10 scores from vec
-                for (const auto& e: x){
+                for (const auto& e: scores){
                         if (n >= 9) break; // only output top 10 scores
                         mvwprintw(ins, n+i, 3, "%d.", n+1);
                         mvwprintw(ins, n+i, 6,"%d", e);
