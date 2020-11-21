@@ -5,10 +5,10 @@
  * there are different types with different behaviours
  *
  *  Normal tiles:   heal 1 hp, not hostile
- *  Spike  tiles:   -5hp. (= -6hp and heal+1) become more common as score goes up
+ *  Spike  tiles:   -3hp. become more common as score goes up
  *  Spring tiles:   bouncy, +1HP per bounce. rare for higher difficulties
  *  fragile tiles:  just let u stand for ~1s then break
- *  conveyer tiles: constantly pushes u < or >. (maybe change player speed if on it?)
+ *  conveyer tiles: constantly pushes u < or > and + 1 hp. 
  * ------------------------------------
  */
 
@@ -47,12 +47,12 @@ Tile::Tile(double y_, int x_, double speed_)
 {
   y = y_;
   x = x_;
-  boxWin = newwin(height,width,y,x);
+  boxWin = newwin(height,width,y,x); // create window for tiles
   speed = speed_;
   init_pair(6, COLOR_BLUE, COLOR_BLACK); // set colour
   wattron(boxWin,COLOR_PAIR(6));
   type = 1;
-  // getmaxyx(curwin, height, width);
+  
 }
 
 Tile::~Tile()
@@ -64,8 +64,8 @@ Tile::~Tile()
 
 void Tile::display()
 {
-  // box(curwin,y,x);
-  mvwin(boxWin, y, x);
+  
+  mvwin(boxWin, y, x); // move tile to current location
   box(boxWin,0,0); // normal tile: display as a box.
   wrefresh(boxWin);
 
@@ -73,17 +73,15 @@ void Tile::display()
 
 void Tile::move()
 {
-  if (!isDead) y -= speed;
-  // if (isDead) y += speed;
+  if (!isDead) y -= speed; // make the tiles go up
+  
   if (y <= YLIMIT + 1){
-    isDead = 1; //true
+    isDead = 1; //true, will be deconstructed
   }
-  // if (y >= 50) isDead = 0;
-
-  // y += speed; // goes off screen. wait for destruction
+  
 }
 
-class SpikeTile : public Tile
+class SpikeTile : public Tile     // inherite properties from the Tile class  
 {
   public:
     SpikeTile(double y_, int x_, double speed_) : Tile(y_, x_, speed_)
@@ -95,12 +93,11 @@ class SpikeTile : public Tile
 
     void display()
     {
-      // box(curwin,y,x);
+      
       mvwin(boxWin, y, x); // move boxwin to current xy
-      // wattron(boxWin,COLOR_PAIR(2));
-      // box(boxWin,0,0);
+      
       wborder(boxWin, 0, 0, '^', 0, 0, 0, 0, 0); //spike box
-      // wattroff(COLOR_PAIR(2));
+      
       wrefresh(boxWin);
     }
 
@@ -119,14 +116,12 @@ class SpringTile : public Tile
 
     void display()
     {
-      // box(curwin,y,x);
+      
       mvwin(boxWin, y, x); // move boxwin to current xy
       box(boxWin,0,0);
       mvwprintw(boxWin,0,0,"_______________");
-      mvwprintw(boxWin,1,0,"___Ξ_Ξ_Ξ_Ξ_Ξ___"); //Ϫ Ӿ
-      // mvwprintw(boxWin,1,0,"≥≤≥≤≥≤≥≤≥≤≥≤≥≤");
-      // mvwprintw(boxWin,2,0,"_______________");
-      // wborder(boxWin,0,0,'v','^',0,0,0,0);
+      mvwprintw(boxWin,1,0,"___Ξ_Ξ_Ξ_Ξ_Ξ___"); //Spring box 
+      
 
       wrefresh(boxWin);
 
@@ -148,9 +143,9 @@ class FragileTile : public Tile
 
     void display()
     {
-      // box(curwin,y,x);
+      
       mvwin(boxWin, y, x); // move boxwin to current xy
-      // box(boxWin,0,0);
+      
       wborder(boxWin, 0, 0, '-', '-', 0, 0, 0, 0); //spike box
       wrefresh(boxWin);
 
@@ -210,7 +205,7 @@ class RConveyerTile : public LConveyerTile
 
     void display()
     {
-      // box(curwin,y,x);
+      
       mvwin(boxWin, y, x);
       box(boxWin, 0, 0); //right conveyer
       if (count < 5){  // switch sprite every 5 count
