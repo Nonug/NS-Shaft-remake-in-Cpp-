@@ -18,11 +18,11 @@
 #include <iterator>   // for iterating vector
 #include <locale.h>   // for unicode sprites
 #include <cstdlib>    // random number
-#include <vector>      //for the generation of tiles and reading of stored score
+#include <vector>     // for the generation of tiles and reading of stored score
 #include <chrono>     // calculate time elapsed
 #include <memory>     // unique_ptr
 #include <cmath>      // for exp()
-#include <fstream>.  // for accessingh the score text file
+#include <fstream>    // for accessingh the score text file
 using namespace std;
 
 
