@@ -1,6 +1,7 @@
 #include "common.h"
 #include "tile.h"
 #include "player.h"
+#include "menu.h"
 #ifndef _MANAGER_H_
 #define _MANAGER_H_
 
@@ -87,10 +88,6 @@ class Manager
     void update_stat(int level, int health, int diff) {
       box(statwin, 0, 0);
 	    mvwprintw(statwin, 2, 5, "HEALTH : %i", health);
-      // wmove(statwin, 3, 5);                // HP bar
-      // for (int i = 0; i < health; i++){
-      //   waddch(statwin, 'o');
-      // }
 	    mvwprintw(statwin, 4, 5, "LEVEL : %i", level);
       mvwprintw(statwin, 6, 5, "DIFFICULTY : %i", diff);
 	    mvwprintw(statwin, 0, 6 , "# STATS #");
@@ -102,12 +99,12 @@ class Manager
 	    mvwprintw(instwin, 3, 2, "Move Left -> Left arrow key");
 	    mvwprintw(instwin, 4, 2, "Move Right -> Right arrow key");
 	    mvwprintw(instwin, 5, 2, "Quit game -> %c", control_quit);
-      mvwprintw(instwin, 6, 2, "blue normal tile:");
+      mvwprintw(instwin, 6, 2, "blue normal tile: +1 hp");
       mvwprintw(instwin, 7, 2, "red spike tile: -3 hp");
-      mvwprintw(instwin, 8, 2, "green spring tile: bouncy");
+      mvwprintw(instwin, 8, 2, "green spring tile: bouncy, +1 hp");
       mvwprintw(instwin, 9, 2, "yellow fragile tile : trap block that breaks");
-      mvwprintw(instwin, 10, 2, "white left conveyer tile: pushes left");
-      mvwprintw(instwin, 11,2, "magenta right conveyer tile: pushes right");
+      mvwprintw(instwin, 10, 2, "white left conveyer tile: pushes left, +1 hp ");
+      mvwprintw(instwin, 11,2, "magenta right conveyer tile: pushes right, +1 hp");
     }
 
 
@@ -118,7 +115,8 @@ class Manager
       auto before = clock::now();
       auto timelimit = spawnTileDelay * chrono::seconds{1};
       srand(time(0)); //set rand seed
-      while(running)
+      int running = menu();
+      while(running == 1)
       {
         first_tile();
         if (clock::now() - before > timelimit)
@@ -137,38 +135,40 @@ class Manager
         {
           running = 0;
         }
-
+        
       }
+      delwin(playwin);
+      endwin();
       //deconstructor here
     }
 
-    // generates the first tile under player
+    // generates the first tile under player 
     // so that player don't fall out of the screen at the beginning
     void first_tile(){
       if (p->first_tile != 1){
         tiles.emplace_back(new Tile(tileSpawnY, 17, speed));
         p->first_tile = 1;
       }
-
+      
     }
     // generate tiles psuedo-randomly
     void addTile(){
-      // chance of hostile tiles spawning increases as time goes on
+      // maybe seed shrinks for higher difficulties/when score is high?
 
-      int seed = rand() % difficulty; // rand from 0 to 99, upperbound drops over time
+      int seed = rand() % difficulty; // rand from 0 to 99
       tileSpawnX = rand() % (MAX_X - BWIDTH); //random xpos for platforms
-      if (seed > 50){         // 50% Normal
+      if (seed > 50){
         tiles.emplace_back(new Tile(tileSpawnY,tileSpawnX,speed));
-      } else if (seed > 40){  // 10% Spring
-        tiles.emplace_back(new SpringTile(tileSpawnY,tileSpawnX,speed));
-      } else if (seed > 25){  // 15% Fragile
-        tiles.emplace_back(new FragileTile(tileSpawnY,tileSpawnX,speed));
-      } else if (seed > 20){  // 5% RConveyerTile
-        tiles.emplace_back(new RConveyerTile(tileSpawnY,tileSpawnX,speed));
-      } else if (seed > 15){  // 5% LConveyerTile
-        tiles.emplace_back(new LConveyerTile(tileSpawnY,tileSpawnX,speed));
-      } else {                // 0 - 14 : Spike (15%)
+      } else if (seed > 40){
         tiles.emplace_back(new SpikeTile(tileSpawnY,tileSpawnX,speed));
+      } else if (seed > 30){
+        tiles.emplace_back(new FragileTile(tileSpawnY,tileSpawnX,speed));
+      } else if (seed > 20){
+        tiles.emplace_back(new RConveyerTile(tileSpawnY,tileSpawnX,speed));
+      } else if (seed > 10){
+        tiles.emplace_back(new LConveyerTile(tileSpawnY,tileSpawnX,speed));
+      } else {
+        tiles.emplace_back(new SpringTile(tileSpawnY,tileSpawnX,speed));
       }
 
     }
@@ -211,7 +211,7 @@ class Manager
       if (level%10 == 0 && level/10 == 1 && p->diff2 != 1){
         p->diff2 = 1;
         difficulty = 91;  // rand from 0 to 90
-        diff += 1;
+        diff += 1; 
       }
       if (level%20 == 0 && level/10 == 2 && p->diff3 != 1){
         p->diff3 = 1;
@@ -234,16 +234,15 @@ class Manager
     void effect(){
       Tile* t = collisionsCheck();
       if (t != NULL){
-        // spring tile bounces upwards by 3 after some delay
-        if (t -> type == SPRING && t->touchCount >= 10){
+        // spring tile bounces upwards by 3
+        if (t -> type == SPRING){
           p->velocity[Y] -= 3;
-          t->touchCount = 0; // reset delay
         }
-        // fragile tile are trap blocks that breaks after some delay
-        if (t -> type == FRAGILE && t->touchCount >= 20){
+        // fragile tile are trap blocks that breaks
+        if (t -> type == FRAGILE){
             t -> isDead = 1;
         }
-        // left conveyer tile sets velocity to 0.2 units leftwards
+        // left conveyer tile sets velocity to 0.2 units leftwards 
         if (t -> type == LCONVEYER){
           p->velocity[X] -= 0.2;
         }
@@ -255,37 +254,56 @@ class Manager
     }
 
 
-
+  
     void healthupdate()
     {
       Tile* t= collisionsCheck();
+      // if player standing on a tile and the tile is not being standed on previously
+      if(t != NULL && t->isTouched != 1){ 
 
-      // kill player if out of bound
+        t->isTouched = 1;
+        //normal tile
+         if (t -> type == NORMAL)
+        {
+          if (p->health < MAX_HEALTH){
+            p->health++;
+          }
+          p->level += 1;
+        }
+        //spike tile
+        if (t -> type == SPIKE)
+        {
+            p->health -= 3;
+            p->level += 1;
+        }
+        //spring tile
+        if (t -> type == SPRING)
+        {
+          if (p->health < MAX_HEALTH){
+            p->health++;
+          }
+          p->level += 1;
+        }
+        //right conveyer tile
+        if (t -> type == LCONVEYER)
+        {
+          if (p->health < MAX_HEALTH){
+            p->health++;
+          }
+          p->level += 1;
+        }
+        //left conveyer tile
+        if (t -> type == RCONVEYER)
+        {
+          if (p->health < MAX_HEALTH){
+            p->health++;
+          }
+          p->level += 1;
+        }
+      }
       if (p -> y > MAX_Y + 10){
         p->health = 0;
-      }
-
-      if (t == NULL) return;
-
-      // increment delay for spring and fragile tiles effect activation
-      if (t->type == SPRING || t->type == FRAGILE) t->touchCount += 2;
-
-      // if player standing on a tile and the tile is not being standed on previously
-      if (t->isTouched != 1){
-
-        t->isTouched = 1;       // mark as touched
-        p->level += 1;          // add score
-
-        if (t -> type == SPIKE){// spike tiles
-            p->health -= 3;
-        } else {                // other tiles
-          if (p->health < MAX_HEALTH){
-            (p->health)++;         // heal
-          }
-        }
-
-      }
-
+      } 
     }
 
 
@@ -335,7 +353,7 @@ class Manager
         case KEY_RIGHT:
           p->mvright();
           break;
-        case 'q':
+        case control_quit:
           running = 0; //TODO define and call destructors
           break;
         default:
