@@ -24,23 +24,22 @@ class Tile
   public:
     Tile(double y_, int x_, double speed_);
     ~Tile();
-    virtual void display();
+    virtual void display(); // display tile with sprite. virtual: polymorphism for subclasses
     void move();
-    bool isDead = 0;     // toggled when out-of-bound, or when fragile is stepped on
-    bool isTouched = 0; // whether the tile has been touched, for hp/score calculation
-    int touchCount = 0; // for spring and fragile tile effect delay
+
+    bool isDead = 0;        // toggled when out-of-bound, or when fragile is stepped on
+    bool isTouched = 0;     // whether the tile has been touched, for hp/score calculation
+    int touchCount = 0;     // for spring and fragile tile effect delay
     int x, width = 15, height = 2;
-    double y; // decimals for better speed calculation
-    int type; // type of tile. defined in common.h
-    WINDOW * boxWin;
+    double y;               // decimals for better speed calculation
+    int type;               // type of tile. defined in common.h
+    WINDOW * boxWin;        // the window of box
 
 
   private:
 
-    int delay;
-
-    double g = 3, gsum = 0;  // gsum: aggregate g for each frame, if > 1, fall
-    double speed;
+    double g = 3;         // gravity constant
+    double speed;         // speed of tile
 
 };
 

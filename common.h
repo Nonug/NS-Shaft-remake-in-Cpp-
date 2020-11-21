@@ -13,10 +13,11 @@
 #include <vector>
 #include <chrono>  // calc time pass
 #include <memory>  // unique_ptr
+#include <cmath> // for exp()
 using namespace std;
 // using namespace std::chrono;
 
-// init_pair(1, COLOR_RED, COLOR_BLACK);
+
 #define DELAY 20000 //delay between frame
 // Tile dimensions
 #define BWIDTH 15
@@ -29,7 +30,7 @@ using namespace std;
 // max health is 10
 #define MAX_HEALTH 9
 #define control_quit 'q'
-// constants for types of tile 
+// constants for types of tile
 #define NORMAL 1
 #define SPIKE 2
 #define SPRING 3
@@ -38,9 +39,9 @@ using namespace std;
 #define RCONVEYER 6
 //for menu
 #define CHOICE 4
-#define control_choose 'g'
-#define up 'u'
-#define down 'j'
+#define control_choose ' '
+#define up 'w'
+#define down 's'
 
 
 

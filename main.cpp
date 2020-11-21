@@ -4,8 +4,8 @@
 #include "common.h" // relocate incldues and global var
 #include "player.h"
 #include "tile.h"
+#include "menu.h"
 #include "gameManager.h"
-// #include "subtypeTile.h"
 // #include <functional> // for unary_function
 
 
@@ -34,8 +34,11 @@ void game_init(){
   nodelay(stdscr, true);
 }
 int main(int argc, char** argv) {
+
     game_init(); // Initialize the screen
-    Manager manager; // create the game manager and run
-    manager.run(); // main game phase, TODO: (include start screen, end screen)
+    menu();
+    Manager* manager = new Manager(); // create the game manager and run
+    manager->run(); // main game phase, TODO: end screen)
+    delete manager;
     endwin(); // end the process TODO: kill playwin, player etc...
  }

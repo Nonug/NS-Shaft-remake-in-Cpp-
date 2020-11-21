@@ -28,7 +28,7 @@ class Manager
     double tileSpawnY = MAX_Y - BHEIGHT + 5; // y of spawnpt of tile
     int tileSpawnX = rand() % 60 + 1; //random xpos for tiles
     double speed = 0.15; // speed of tiles
-    double spawnTileDelay = 0.8 ;
+    double spawnTileDelay; // delay between each tile spawn = 0.12 / speed
 
     bool running = 1; // while game run
 
@@ -40,16 +40,23 @@ class Manager
     vector<unique_ptr<Tile>> tiles;
     Player* p;
     int diff = 1;
-    int difficulty = 100;
+    int levelCoeff = 100; // As game progress, it lowers.
+                          // which increases tile speed and hostile tile spawn rate
 
     Manager(){
       playwin = newwin(MAX_Y,MAX_X, 5 , 1); // playing window
-      statwin = newwin(9,24,5,MAX_X+4); //statistics window!
+      statwin = newwin(9,24,5,MAX_X+4);     //statistics window!
       instwin = newwin(14,55,15, MAX_X+4);
        nodelay(playwin, true);
-      p = new Player(playwin,6,20);
+      p = new Player(playwin,10,20);
     }
 
+    ~Manager(){
+      delete p;
+      delwin(playwin);
+      delwin(statwin);
+      delwin(instwin);
+    }
 
     void display(){
 
@@ -73,7 +80,7 @@ class Manager
         p->display();
       }
 
-      box(playwin,0,0);
+      wborder(playwin, 0, 0, 'V', 0, 0, 0, 0, 0);
       box(statwin,0,0);//!
       box(instwin,0,0);
 
@@ -117,12 +124,14 @@ class Manager
       using clock = chrono::system_clock;
       using sec = chrono::duration<double>;
       auto before = clock::now();
-      auto timelimit = spawnTileDelay * chrono::seconds{1};
+      spawnTileDelay = 120 / speed;
+      auto timelimit = spawnTileDelay * chrono::milliseconds{1};
       srand(time(0)); //set rand seed
-      int running = menu(); //new
-      while(running == 1)   // new
+
+      tiles.emplace_back(new Tile(tileSpawnY, 17, speed));
+      while(running)
       {
-        first_tile();
+
         if (clock::now() - before > timelimit)
         {
           before = clock::now();
@@ -134,43 +143,39 @@ class Manager
         healthupdate();
         update_stat(p->level, p->health, diff);
         update_inst();
-        checkseed(p->level);
+        // checkseed(p->level);
         if (p->health <= 0)
         {
           running = 0;
         }
 
       }
-      delwin(playwin);//new
-      endwin();       //new
+      // delwin(playwin);//new
+      // endwin();       //new
       //deconstructor here
     }
 
-    // generates the first tile under player
-    // so that player don't fall out of the screen at the beginning
-    void first_tile(){
-      if (p->first_tile != 1){
-        tiles.emplace_back(new Tile(tileSpawnY, 17, speed));
-        p->first_tile = 1;
-      }
 
-    }
     // generate tiles psuedo-randomly
     void addTile(){
       // chance of hostile tiles spawning increases as time goes on
 
-      int seed = rand() % difficulty; // rand from 0 to 99, upperbound drops over time
+      // 59 e^{-\frac{x}{100}}\ +40
+      levelCoeff = 59 * exp(-(p->level)/100) + 40; // from 99 to 40
+      speed = 0.002 * p->level + 0.15; // speed from 0.15 to 0.3
+      int seed = rand() % levelCoeff; // rand from 99 to 40, upperbound drops over time
       tileSpawnX = rand() % (MAX_X - BWIDTH); //random xpos for platforms
+
       if (seed > 50){         // 50% Normal
         tiles.emplace_back(new Tile(tileSpawnY,tileSpawnX,speed));
       } else if (seed > 40){  // 10% Spring
         tiles.emplace_back(new SpringTile(tileSpawnY,tileSpawnX,speed));
-      } else if (seed > 25){  // 15% Fragile
-        tiles.emplace_back(new FragileTile(tileSpawnY,tileSpawnX,speed));
-      } else if (seed > 20){  // 5% RConveyerTile
+      } else if (seed > 25){  // 5% RConveyerTile
         tiles.emplace_back(new RConveyerTile(tileSpawnY,tileSpawnX,speed));
-      } else if (seed > 15){  // 5% LConveyerTile
+      } else if (seed > 20){  // 5% LConveyerTile
         tiles.emplace_back(new LConveyerTile(tileSpawnY,tileSpawnX,speed));
+      } else if (seed > 15){  // 15% Fragile
+        tiles.emplace_back(new FragileTile(tileSpawnY,tileSpawnX,speed));
       } else {                // 0 - 14 : Spike (15%)
         tiles.emplace_back(new SpikeTile(tileSpawnY,tileSpawnX,speed));
       }
@@ -188,6 +193,12 @@ class Manager
 
 
     Tile* collisionsCheck(){
+      p->invincibleCount -= 1;
+      if (p->invincibleCount > 0){// player invincible, no collision allowed
+        p->inAir = 1; // no collisions at all
+        return NULL;
+      }
+
       for (auto& tile: tiles){
         double tileMaxY = tile->y + tile->height;
         double tileMaxX = tile->x + tile->width;
@@ -202,42 +213,18 @@ class Manager
           return tile.get(); // return RAW pointer to tile
         }
       }
-      p->inAir = 1; // collisions at all
+      p->inAir = 1; // no collisions at all
       return NULL;
     }
 
 
-    // change the difficulty as the level increases
-    // as the random function works as follow
-    // rand() % (max - min + 1) + min
-    // where the generated number would be in range min <= x <= max
-    void checkseed(int level){
-      if (level%10 == 0 && level/10 == 1 && p->diff2 != 1){
-        p->diff2 = 1;
-        difficulty = 91;  // rand from 0 to 90
-        diff += 1;
-      }
-      if (level%20 == 0 && level/10 == 2 && p->diff3 != 1){
-        p->diff3 = 1;
-        difficulty = 86; // rand from 0 to 85
-        diff += 1;
-      }
-      if (level%30 == 0 && level/10 == 3 && p->diff4 != 1){
-        p->diff4 = 1;
-        difficulty = 81; // rand from 0 to 80
-        diff += 1;
-      }
-      if (level%40 == 0 && level/10 == 4 && p->diff5 != 1){
-        p->diff5 = 1;
-        difficulty = 76; // ramd from 0 to 75
-        diff += 1;
-      }
-    }
+
 
     // effects of the tiles
     void effect(){
       Tile* t = collisionsCheck();
-      if (t != NULL){
+      if (t != NULL ){
+
         // spring tile bounces upwards by 3 after some delay
         if (t -> type == SPRING && t->touchCount >= 10){
           p->velocity[Y] -= 3;
@@ -269,7 +256,9 @@ class Manager
         p->health = 0;
       }
 
-      if (t == NULL) return;
+
+
+      if (t == NULL) return; // end function sicne no collision
 
       // increment delay for spring and fragile tiles effect activation
       if (t->type == SPRING || t->type == FRAGILE) t->touchCount += 2;
@@ -297,18 +286,18 @@ class Manager
     void movePlayer(){
       p->x += p->velocity[X];
       Tile* t= collisionsCheck();
-      if (t != NULL){
-          if (p->velocity[X] > 0){
-            // playerR = tileL
-            // playerX + playerW = tileX
-            //p->x = t->x - p->width;
-
-          }
-          if (p->velocity[X] < 0){
-            // playerL = tileR
-            // p->x = t->x + t->width;
-          }
-      }
+      // if (t != NULL){
+      //     if (p->velocity[X] > 0){
+      //       // playerR = tileL
+      //       // playerX + playerW = tileX
+      //       //p->x = t->x - p->width;
+      //
+      //     }
+      //     if (p->velocity[X] < 0){
+      //       // playerL = tileR
+      //       // p->x = t->x + t->width;
+      //     }
+      // }
 
       p->y += p->velocity[Y];
       t = collisionsCheck();
@@ -320,10 +309,12 @@ class Manager
           p->y = t->y - p->height;
         }
 
-      //   if (p->velocity[Y] < 0)
-      //     // playerTop = tileDown
-      //     y = tile->y + tile->height;
-      // }
+        // if (p->velocity[Y] < 0){
+        //   // playerDown = tileTop
+        //   // playerY + playerH = tileY
+        //   p->y = t->y + p->height;
+        // }
+
       // p->velocity[X] = 0;
       // p->velocity[Y] = 0;
       }
@@ -333,10 +324,10 @@ class Manager
       int choice = getch();
       switch(choice)
       {
-        case KEY_LEFT:
+        case 'a':
           p->mvleft();
           break;
-        case KEY_RIGHT:
+        case 'd':
           p->mvright();
           break;
         case control_quit:
