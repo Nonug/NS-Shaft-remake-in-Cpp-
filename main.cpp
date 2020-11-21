@@ -40,12 +40,15 @@ void game_init(){
 // Main game loop.
 int main(int argc, char** argv) {
 
+    bool r = 1;
     game_init();                        // Initialize the screen
-    while (1){
+    do {
       menu();                           // start screen
       Manager* manager = new Manager(); // create the game manager and run
       manager->run();                   // main game phase
+      r = manager->running;
       delete manager;                   // release memory
     }
+    while (r);
     endwin();                           // end ncurses terminal
  }

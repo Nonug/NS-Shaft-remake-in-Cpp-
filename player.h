@@ -27,11 +27,13 @@ class Player
     // these are public for manager
     double x, y;
     double velocity[2] = {0,0}; // (y,x) velocity
-    bool inAir = 0;             // is player in air? (maybe useful for defining onStepBlock)
+    // bool inAir = 0;             // is player in air? (maybe useful for defining onStepBlock)
     int height = 2, width = 2;  // size of the player
     int health = MAX_HEALTH;    // default hp   TODO: fix double digit issue
     int level = 0;              // default lv
-    int invincibleCount = 0;
+    int invincibleCount = 0;    // increased if hit ceiling, allow phasing through tiles and count down back to 0
+    int hurtFlashCount = 0;     // increased when hurt, change colour to red until count back to 0
+    int spriteCount = 0;     // count down to alternate between walking sprites
 
     Player(WINDOW * win, double yc, double xc);
     ~Player();
@@ -73,29 +75,29 @@ Player::Player(WINDOW * win, double yc, double xc)
   // keypad(curwin, true); // is this necessary?
 }
 
-// Destructor TODO
+// Destructor : release memory
 Player::~Player()
 {
-  // currentSprite->NULL;
-  // curwin->NULL;
+  delwin(curwin);
 }
 
 void Player::mvleft()
 {
   velocity[X] = -speed;
 
-  // maybe relocate this to manager (physics control)
   // Stops the player from going pass the playwin
   if(x - speed < 1 + offset) // offset: adjust for shift of sprite
   {
     x = 1 + offset;
     velocity[X] = 0; // reset velocity (is this necessary?)
   }
-  // currentSprite = (inAir)? jumpL : stopL; // this aint working properly
-  if (currentSprite == movingLUp){ // alternate between 2 moving spirtes
+
+  spriteCount--;
+  if (spriteCount > 5){ // alternate between 2 moving spirtes
     currentSprite = movingLDown;
   } else {
     currentSprite = movingLUp;
+    if (spriteCount <= 0) spriteCount = 10;
   }
 }
 
@@ -103,7 +105,6 @@ void Player::mvright()
 {
   velocity[X] = speed;
 
-  // maybe relocate this to manager (physics control)
   // Stops the player from going pass the playwin
   if (x + speed + width > MAX_X - offset - 1) // offset: adjust for shift of sprite
   {
@@ -111,16 +112,14 @@ void Player::mvright()
     velocity[X] = 0; // reset velocity (is this necessary?)
   }
 
-  // currentSprite = (inAir)? jumpR : stopR; // this aint working properly
-  if (currentSprite == movingRUp){
+  spriteCount--;
+  if (spriteCount > 5){ // alternate between 2 moving spirtes
     currentSprite = movingRDown;
   } else {
     currentSprite = movingRUp;
+    if (spriteCount <= 0) spriteCount = 10;
   }
 
-  // display(stopR);
-  // if(x > xMax-1)
-  //   x = xMax-1;
 }
 
 void Player::gravity()
@@ -138,14 +137,19 @@ void Player::display()
   if (y < YLIMIT){ // Prevent clipping out of ceiling
     y = YLIMIT + 1; // set y below ceiling
     invincibleCount = 25; // 5 frames of no collision
+    hurtFlashCount += 30;
     health -= 3; //lose hp
   };
 
-  init_pair(1, COLOR_RED, COLOR_BLACK); // TODO: make player flash colour if hurt
-  attron(COLOR_PAIR(1));
+  init_pair(9, COLOR_RED, COLOR_BLACK); // TODO: make player flash colour if hurt
+  if (hurtFlashCount > 0){
+    hurtFlashCount--;
+    if (10 < hurtFlashCount < 20) attron(COLOR_PAIR(9)); // flash red
+  }
+
   mvprintw(y,x-offset,(*currentSprite).c_str());
   mvprintw(y+1,x+3-offset,(*++currentSprite).c_str()); // point sprite[1]
-  attroff(COLOR_PAIR(1));
+  attroff(COLOR_PAIR(9));
   currentSprite--;  // point sprite[0]
   velocity[X] = 0;
   velocity[Y] = 0;

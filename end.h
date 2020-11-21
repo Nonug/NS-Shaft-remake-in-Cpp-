@@ -88,20 +88,19 @@ int endscr(int level)
             // return to menu
             if(i == 0)
             {
-                bool r = 1;
                 delwin(endw);
                 clear();
                 refresh();
-                return r;
+                return 1;
             }
             // the choice of returning to
-            if(i == 1)
-            {
+            if(i == 1){
+              delwin(endw);
+              clear();
+              refresh();
+              return 0;
+            };
 
-                endwin();
-
-            }
-            break;
         }
 	    // highlights the next choice which the player is currently on
         wattron(endw, A_STANDOUT);
@@ -110,9 +109,7 @@ int endscr(int level)
         wattroff(endw, A_STANDOUT);
 
     }
-    delwin(endw);
-    clear();
-    refresh();
+
     return 0;
 }
 

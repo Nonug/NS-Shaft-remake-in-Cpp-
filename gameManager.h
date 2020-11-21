@@ -34,7 +34,7 @@ class Manager
     double speed = 0.15;                     // speed of tiles
     double spawnTileDelay;      // delay between each tile spawn = 0.12 / speed
 
-    bool running = 1;               // is game running?
+    bool running = 1;               // is game running? after game ends, =1 if go main screen, else exit
 
     WINDOW* playwin;                // game window, with tiles and player
     WINDOW* statwin;                // show curent level, HP
@@ -101,7 +101,7 @@ class Manager
       // when dead or quit, wipe the screen and show end screen
       clear();
       refresh();
-      endscr(p->level); // from end.h
+      running = endscr(p->level); // call end screen, running becomes true if choose return main screen
 
     }
 
@@ -231,7 +231,6 @@ class Manager
 
       if (p->invincibleCount > 0){// player invincible, no collision allowed
         p->invincibleCount -= 1;
-        p->inAir = 1;
         return NULL; // no collisions at all
       }
 
@@ -245,11 +244,9 @@ class Manager
             tile->x >= (p->x + p->width))
             continue; // no collision
         else {
-          p->inAir = 0; // has collision
           return tile.get(); // return RAW pointer to tile
         }
       }
-      p->inAir = 1; // no collisions at all
       return NULL;
     }
 
@@ -306,6 +303,7 @@ class Manager
         p->level += 1;          // add score
 
         if (t -> type == SPIKE){// spike tiles
+            p->hurtFlashCount += 30; // indicate hurt, player will change color for 10 counts
             p->health -= 3;     // damage
         } else {                // other tiles
           if (p->health < MAX_HEALTH){
