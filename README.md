@@ -16,13 +16,12 @@ From [Wikipedia](https://en.wikipedia.org/wiki/NS-Shaft):
 > The player controls the character with 'a' and 'd'. The max health point of the player is 9.
 There are 6 types of tiles in the game and the player will desend onto the tiles. As the game progresses, the hostile spike tile will become more and more common. Here's a brief introduction of the 6 tiles. 
 
-
-Normal tile (blue) : adds one health point
-Spike tile (red) : reduces three health points
-Fragile tile (yellow) : adds one health point and breaks after ~ 1 second
-Spring tile (green) : adds one health point and bounces the player up 
-Left conveyer tile (white) : adds one health point and pushes the player to the left
-Right conveyer tile (magenta) : adds one health point and pushes the player to the right
+> Normal tile (blue) : adds one health point
+> Spike tile (red) : reduces three health points
+> Fragile tile (yellow) : adds one health point and breaks after ~ 1 second
+> Spring tile (green) : adds one health point and bounces the player up 
+> Left conveyer tile (white) : adds one health point and pushes the player to the left
+> Right conveyer tile (magenta) : adds one health point and pushes the player to the right
 
 
 ## Showcase:
