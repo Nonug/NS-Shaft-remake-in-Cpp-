@@ -56,7 +56,7 @@ int endscr(int level)
     // instructions of the end screen usage
     mvwprintw(endw, 10, 2, "UP  -> '%c' ", UP);
     mvwprintw(endw, 11, 2, "DOWN -> '%c' ", DOWN);
-    mvwprintw(endw, 12, 2, "Select -> '%c' ", "SPACE");
+    mvwprintw(endw, 12, 2, "Select -> SPACE ");
     wrefresh(endw);
     noecho();
     keypad(endw, true);
