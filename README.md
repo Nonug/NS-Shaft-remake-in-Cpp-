@@ -25,25 +25,30 @@ Yellow fragile tiles | add one health point and breaks after ~1 second
 Left/Right conveyer tiles | add one health point and pushes player to respective directions   
 
 ## Showcase:
+https://www.youtube.com/watch?v=mfsU_nKl2wI
+
+Original
 [![](http://img.youtube.com/vi/-SksNwLmSSE/0.jpg)](https://youtu.be/-SksNwLmSSE?t=32 "")
 
 ## Code Requirements:
 Requirement | Implementation
 ------------ | -------------
 Generation of random game sets or events | Procedural generation of different types of tiles randomly (types, location)
-Data structures for storing game status | Setting up different types of data for the storage of game status such as player health 
+Data structures for storing game status | Using classes to store corrisponding game status such as player health. Using vectors to store highscores and on-screen tiles 
 Dynamic memory management | Setting up pointers with "new" type to create dynamic variables in the heap instead of regular memory (e.g. player)
-File input/output (e.g., for loading/saving game status) | Storing high scores in the leader board
+File input/output (e.g., for loading/saving game status) | Storing/retrieving high scores in the leaderboard
 Program codes in multiple files | header files for game components(gameManager.h/tile.h/menu.h, etc)   
 
 ## Libraries used:
 - `ncurses.h` for drawing the frames in the terminal
 
 ## Compile
-`g++ -std=c++14 main.cpp -lncursesw`
+by following https://stackoverflow.com/questions/60325432/using-ncurses-without-installing-it , clone ncurses mirror from github.
+
+`g++ -I ~/local/include -I ~/local/include/ncursestw -L ~/local/lib -o main main.cpp -lncursestw -ldl -pthread`
 
 ## Run
-`./a.out`
+`./main`
 
 ## Todo
 - [X] Proper indentation and naming styles
